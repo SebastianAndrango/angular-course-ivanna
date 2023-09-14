@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LoginRequest } from './loginRequest';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 import { User } from './user';
 
 @Injectable({
@@ -10,7 +10,25 @@ import { User } from './user';
 export class LoginService {
   constructor(private http: HttpClient) {}
 
-  login(credentials: LoginRequest):Observable<User>{
-    return this.http.get<User>("././assets/data.json")
+  login(credentials: LoginRequest): Observable<User> {
+    return this.http.get<User>('././assets/data.json').pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      console.error('Se ha producido un error', error.error);
+    } else {
+      console.error(
+        'Backend retornó el codigo de estado: ',
+        error.status,
+        error.error
+      );
+    }
+    return throwError(
+      () =>
+        new Error('Algo malo sucedió; por favor, inténtelo de nuevo más tarde.')
+    );
   }
 }
