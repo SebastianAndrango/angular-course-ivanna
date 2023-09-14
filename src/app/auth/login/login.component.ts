@@ -11,16 +11,15 @@ import { LoginRequest } from 'src/app/services/auth/loginRequest';
 })
 export class LoginComponent implements OnInit {
   loginError: string = '';
+  loginForm = this.formBuilder.group({
+    email: ['isma@gmail.com', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private loginService: LoginService
   ) {}
-
-  loginForm = this.formBuilder.group({
-    email: ['isandrango@espe.edu.ec', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-  });
 
   ngOnInit(): void {}
 
@@ -34,6 +33,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     if (this.loginForm.valid) {
+      this.loginError = '';
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({
         next: (userData) => {
           console.log(userData);
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       });
     } else {
       this.loginForm.markAllAsTouched();
-      alert('Error al ingresar los datos');
+      alert('Error al ingresar los datos.');
     }
   }
 }
